@@ -25,7 +25,6 @@ def select_db(dbname):
 	else:
 		print("ERROR : 数据库不存在")
 
-
 def create_table(table_name,columns):
 	'''
 	create table test(id int,name string)
@@ -44,7 +43,6 @@ def create_table(table_name,columns):
 		print("ERROR : 表创建失败，可能原因为data目录没有权限")
 		print(e)
 
-
 def drop_db(dbname):
 	db_tmp = env.DB_PATH + "/" + dbname + "/"
 	print(db_tmp)
@@ -60,6 +58,9 @@ def drop_db(dbname):
 def drop_table(table_name):
 	# 想要删除表的路径
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
+	if env.CURRENT_DB == "":
+		print("ERROR : 未选择数据库")
+		return 0
 	try:
 		if os.path.isfile(tmp_table_path) == True :
 			os.remove(tmp_table_path)
@@ -69,7 +70,6 @@ def drop_table(table_name):
 	except Exception as e:
 		print("ERROR : 删除表错误 原因未知")
 		print(e)
-
 
 def insert_into_table(table_name,data):
 	'''
@@ -83,7 +83,7 @@ def insert_into_table(table_name,data):
 
 	# 检查表头是否存在
 	table_info = function.get_table_info(tmp_table_path)
-	if table_name == False :
+	if table_info == False :
 		return 0
 
 	# 检查数据是否 符合表的结构
@@ -100,7 +100,6 @@ def insert_into_table(table_name,data):
 	except Exception as e:
 		print("ERROR : " + e)
 		pass
-
 
 def delete_from_table(table_name,where):
 	'''
@@ -150,7 +149,7 @@ def select_from_table(table_name,where):
 
 	# 获取表结构
 	table_info = function.get_table_info(tmp_table_path)
-	if table_name == False :
+	if table_info == False :
 		return 0
 	table_info = json.loads(table_info)
 
@@ -159,7 +158,6 @@ def select_from_table(table_name,where):
 		header_data.append(x) 
 
 	function.console_print(header_data,res)
-
 
 def update_from_table(table_name,set_rule,where):
 	'''
@@ -227,10 +225,14 @@ def desc_from_table(table_name):
 	'''
 	打印 表结构
 	'''
+	if env.CURRENT_DB == "":
+		print("ERROR : 未选择数据库")
+		return 0
+		
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 	# 获取表结构
 	table_info = function.get_table_info(tmp_table_path)
-	if table_name == False :
+	if table_info == False :
 		return 0
 	table_info = json.loads(table_info)
 
@@ -239,7 +241,6 @@ def desc_from_table(table_name):
 		res.append({"Field":x,"Type":table_info[x]})
 
 	function.console_print(["Field","Type"] ,res)
-
 
 def show_databases():
 

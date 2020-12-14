@@ -5,8 +5,10 @@ import lib.parse.SqlToCode as SqlToCode
 if __name__ == '__main__':
 
 	while True:
-		sql = input("")
+		sql = input("sql > ")
+		print("")
 		SqlToCode.parseSql(sql)
+		print("")
 	#db.create_db("test") #数据库创建
 	#db.select_db("test1")
 	#db.create_table("bbb",{"id":"int","name":"string"}) #创建表
