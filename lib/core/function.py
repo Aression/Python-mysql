@@ -91,6 +91,9 @@ def table_where(table_path,where):
 	# 将表头写入首元素
 	res = []
 
+	# 没有条件则全部返回
+	if where == None or where == [] or where == "" :
+		return data
 	# 将取出where 中的元素 
 	# 如 {"id":["=",2]}  operation 为 = ，condition为2
 	# eval 构造的为 id=2
@@ -114,6 +117,7 @@ def table_where(table_path,where):
 			if column == "int":
 				if eval(str(x[sub_where])+str(operation)+str(condition)) == True:
 					res.append(x)
+
 	return res
 
 
@@ -169,6 +173,9 @@ def console_print(header_data,json_data):
 			tmp_str += ("| " + str(data[column])).ljust(column_max_len_array[count]+10,' ')
 			count += 1
 		print(tmp_str + "|")
+
+	if len(json_data) == 0:
+		print("|暂无数据".ljust(sum_tmp + len(column_max_len_array) * 10-4,' ') + "|")
 
 	# 打印行尾
 	print("+".ljust(sum_tmp + len(column_max_len_array) * 10,'-') + "+")

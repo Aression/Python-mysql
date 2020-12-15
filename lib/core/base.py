@@ -28,8 +28,12 @@ def select_db(dbname):
 def create_table(table_name,columns):
 	'''
 	create table test(id int,name string)
-	kwargs = {'id': 'int', 'name': 'string'}
+	columns = {'id': 'int', 'name': 'string'}
 	'''
+	if env.CURRENT_DB == "":
+		print("ERROR : 未选择数据库")
+		return 0
+
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
 	try:
@@ -73,7 +77,7 @@ def drop_table(table_name):
 
 def insert_into_table(table_name,data):
 	'''
-	data的类型为元组
+	data的类型为 [{"name":x,"sex":x},{"name":x,"sex":x}]
 	'''
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
@@ -87,13 +91,15 @@ def insert_into_table(table_name,data):
 		return 0
 
 	# 检查数据是否 符合表的结构
-	if function.check_data_with_table_format(tmp_table_path,data) == False:
-		return 0
+	for x in data : 
+		if function.check_data_with_table_format(tmp_table_path,x) == False:
+			return 0
 	# 尝试写入数据
 	try:
 		if os.path.isfile(tmp_table_path) == True :
 			with open(tmp_table_path,"a") as f :
-				f.write(json.dumps(data) + "\n")
+				for x in data:
+					f.write(json.dumps(x) + "\n")
 				print("数据插入成功")
 		else:
 			print("ERROR : 数据表{0}不存在".format(table_name))
@@ -136,8 +142,9 @@ def delete_from_table(table_name,where):
 	except Exception as e:
 		raise e
 
-def select_from_table(table_name,where):
+def select_from_table(table_name,columns,where):
 	'''
+	columns 格式为 [column1,column2]
 	where 为条件 格式为字典类型 如 {"id":[">","3"],"name":["=","张三"]}
 	'''
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
@@ -154,8 +161,25 @@ def select_from_table(table_name,where):
 	table_info = json.loads(table_info)
 
 	header_data = []
-	for x in table_info:
-		header_data.append(x) 
+	res_tmp = []
+	# 按列筛选
+	if "*" == columns[0]:
+		for x in table_info:
+			header_data.append(x)
+	else:
+		# 过滤表头
+		for x in table_info:
+			if x in columns :
+				header_data.append(x)
+		# 过滤数据
+		for x in res:
+			tmp_dict = {}
+			for column in  x :
+				if column in columns :
+					tmp_dict.update({column : x[column]})
+			res_tmp.append(tmp_dict)
+
+		res = res_tmp
 
 	function.console_print(header_data,res)
 
@@ -228,7 +252,7 @@ def desc_from_table(table_name):
 	if env.CURRENT_DB == "":
 		print("ERROR : 未选择数据库")
 		return 0
-		
+
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 	# 获取表结构
 	table_info = function.get_table_info(tmp_table_path)
@@ -259,7 +283,9 @@ def show_databases():
 	function.console_print(["Database"] ,res)
 
 def show_tables():
-
+	'''
+	查看数据库中表的信息
+	'''
 	if env.CURRENT_DB == "":
 		print("ERROR : 未选择数据库")
 		return 0
@@ -270,3 +296,13 @@ def show_tables():
 		res.append({"Tables_in_{0}".format(env.CURRENT_DB) : x.split(".")[0]})
 	
 	function.console_print(["Tables_in_{0}".format(env.CURRENT_DB)],res)
+
+
+def select_version():
+	'''
+	查看数据库版本
+	'''
+	if env.VERSION == "" :
+		print("ERROR : 环境错误")
+
+	function.console_print(["version"],[{"version":env.VERSION}])
