@@ -48,6 +48,46 @@ def create_table(table_name,columns):
 		print("ERROR : 表创建失败，可能原因为data目录没有权限")
 		print(e)
 
+def show_databases():
+
+	try:
+		db_list = os.listdir(env.DB_PATH)
+		if len(db_list) == 0 :
+			print("ERROR : 暂无数据库")
+			return 0
+	except Exception as e:
+		print("ERROR : 暂无数据库")
+	
+	res = []
+	for x in db_list:
+		res.append({"Database":x})
+
+	function.console_print(["Database"] ,res)
+
+def show_tables():
+	'''
+	查看数据库中表的信息
+	'''
+	if env.CURRENT_DB == "":
+		print("ERROR : 未选择数据库")
+		return 0
+	table_list = os.listdir(env.CURRENT_PATH)
+
+	res = []
+	for x in table_list :
+		res.append({"Tables_in_{0}".format(env.CURRENT_DB) : x.split(".")[0]})
+	
+	function.console_print(["Tables_in_{0}".format(env.CURRENT_DB)],res)
+
+def select_version():
+	'''
+	查看数据库版本
+	'''
+	if env.VERSION == "" :
+		print("ERROR : 环境错误")
+
+	function.console_print(["version"],[{"version":env.VERSION}])
+
 def drop_db(dbname):
 	db_tmp = env.DB_PATH + "/" + dbname + "/"
 	print(db_tmp)
@@ -179,36 +219,10 @@ def select_from_table(table_name,columns,where):
 		return 0
 	table_info = json.loads(table_info)
 
-	# 检测字段是否位于表中
-	for column in columns:
-		if column == "*":
-			continue
-		if column not in table_info :
-			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
-			return 0
-
-	header_data = []
-	res_tmp = []
-	# 按列筛选
-	if "*" == columns[0]:
-		for x in table_info:
-			header_data.append(x)
-	else:
-		# 过滤表头
-		for x in table_info:
-			if x in columns :
-				header_data.append(x)
-		# 过滤数据
-		for x in res:
-			tmp_dict = {}
-			for column in  x :
-				if column in columns :
-					tmp_dict.update({column : x[column]})
-			res_tmp.append(tmp_dict)
-
-		res = res_tmp
-
-	function.console_print(header_data,res)
+	res_data = function.columns_filter(table_info,columns,res)
+	header_data = res_data[0]
+	res_data.remove(header_data)
+	function.console_print(header_data,res_data)
 
 def update_from_table(table_name,set_rule,where):
 	'''
@@ -293,46 +307,6 @@ def desc_from_table(table_name):
 
 	function.console_print(["Field","Type"] ,res)
 
-def show_databases():
-
-	try:
-		db_list = os.listdir(env.DB_PATH)
-		if len(db_list) == 0 :
-			print("ERROR : 暂无数据库")
-			return 0
-	except Exception as e:
-		print("ERROR : 暂无数据库")
-	
-	res = []
-	for x in db_list:
-		res.append({"Database":x})
-
-	function.console_print(["Database"] ,res)
-
-def show_tables():
-	'''
-	查看数据库中表的信息
-	'''
-	if env.CURRENT_DB == "":
-		print("ERROR : 未选择数据库")
-		return 0
-	table_list = os.listdir(env.CURRENT_PATH)
-
-	res = []
-	for x in table_list :
-		res.append({"Tables_in_{0}".format(env.CURRENT_DB) : x.split(".")[0]})
-	
-	function.console_print(["Tables_in_{0}".format(env.CURRENT_DB)],res)
-
-def select_version():
-	'''
-	查看数据库版本
-	'''
-	if env.VERSION == "" :
-		print("ERROR : 环境错误")
-
-	function.console_print(["version"],[{"version":env.VERSION}])
-
 def select_data_from_table_with_where(table_name,columns,wheres,relations):
 
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
@@ -366,35 +340,10 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations):
 
 	res_data = function.data_where(table_info,data,tmp)
 
-	# 按列 筛选
-	# 检测字段是否位于表中
-	for column in columns:
-		if column == "*":
-			continue
-		if column not in table_info :
-			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
-			return 0
+	res_data = function.columns_filter(table_info,columns,res_data)
 
-	header_data = []
-	res_tmp = []
-	# 按列筛选
-	if "*" == columns[0]:
-		for x in table_info:
-			header_data.append(x)
-	else:
-		# 过滤表头
-		for x in table_info:
-			if x in columns :
-				header_data.append(x)
-		# 过滤数据
-		for x in res_data:
-			tmp_dict = {}
-			for column in  x :
-				if column in columns :
-					tmp_dict.update({column : x[column]})
-			res_tmp.append(tmp_dict)
-
-		res_data = res_tmp
-
+	#表头
+	header_data = res_data[0]
+	res_data.remove(header_data)
 	function.console_print(header_data,res_data)
 

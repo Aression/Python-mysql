@@ -210,8 +210,6 @@ def parseSql(sql):
         else:
             print("ERROR : 未知语句")
 
-
     except Exception as e:
         raise e
         print("ERROR : SQL 解析错误")
-# 

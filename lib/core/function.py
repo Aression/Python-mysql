@@ -19,7 +19,6 @@ def get_table_info(table_path):
 		print("ERROR : 获取表信息失败")
 		return False
 
-
 def check_data_with_table_format(table_name,data):
 	# 检查信息是否与表的格式一致
 	# 用在 insert 语句
@@ -45,7 +44,6 @@ def check_data_with_table_format(table_name,data):
 		print(e)
 		print("ERROR : 发生异常")
 		return False
-
 
 def get_all_data_from_table(table_path):
 	'''
@@ -121,7 +119,6 @@ def table_where(table_path,where):
 
 	return res
 
-
 def select_data(table_info,data,wheres):
 
 	res = []
@@ -144,7 +141,6 @@ def select_data(table_info,data,wheres):
 			if column == "int":
 				if eval(str(x[sub_where])+str(operation)+str(condition)) == True:
 					res.append(json.dumps(x))
-
 	return res
 
 def data_where(table_info,data,wheres):
@@ -188,9 +184,6 @@ def data_where(table_info,data,wheres):
 
 	return result
 	#console_print(table_info,result)
-
-
-
 
 def console_print(header_data,json_data):
 	'''
@@ -253,3 +246,38 @@ def console_print(header_data,json_data):
 
 	# 打印行尾
 	print("+".ljust(sum_tmp + len(column_max_len_array) * 10,'-') + "+")
+
+def columns_filter(table_info,columns_filter,data):
+	# 对列进行过滤
+	# 按列 筛选
+	# 检测字段是否位于表中
+	for column in columns_filter:
+		if column == "*":
+			continue
+		if column not in table_info :
+			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
+			return 0
+
+	header_data = []
+	res_tmp = []
+	# 按列筛选
+	if "*" == columns_filter[0]:
+		for x in table_info:
+			header_data.append(x)
+	else:
+		# 过滤表头
+		for x in table_info:
+			if x in columns_filter :
+				header_data.append(x)
+		# 过滤数据
+		for x in data:
+			tmp_dict = {}
+			for column in  x :
+				if column in columns_filter :
+					tmp_dict.update({column : x[column]})
+			res_tmp.append(tmp_dict)
+
+		data = res_tmp
+
+	# header_data 加入data 头部
+	return [header_data] + data
