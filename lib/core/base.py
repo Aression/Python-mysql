@@ -201,7 +201,7 @@ def delete_from_table(table_name,where):
 	except Exception as e:
 		raise e
 
-def select_from_table(table_name,columns,where):
+def select_from_table(table_name,columns,where,limit):
 	'''
 	columns 格式为 [column1,column2]
 	where 为条件 格式为字典类型 如 {"id":[">","3"],"name":["=","张三"]}
@@ -222,6 +222,11 @@ def select_from_table(table_name,columns,where):
 	res_data = function.columns_filter(table_info,columns,res)
 	header_data = res_data[0]
 	res_data.remove(header_data)
+	
+	# 引入limit 功能 
+	if len(limit) != 0 :
+		res_data = function.data_limit(res_data,limit)
+
 	function.console_print(header_data,res_data)
 
 def update_from_table(table_name,set_rule,where):
@@ -307,7 +312,7 @@ def desc_from_table(table_name):
 
 	function.console_print(["Field","Type"] ,res)
 
-def select_data_from_table_with_where(table_name,columns,wheres,relations):
+def select_data_from_table_with_where(table_name,columns,wheres,relations,limit):
 
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
@@ -327,7 +332,12 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations):
 	
 	tmp_wheres = []
 	for where in wheres:
-		operation = re.findall("(>|=|<)+",where)[0]
+		operation = re.findall("[><=!]+",where)
+		print(operation)
+		if len(operation) == 2:
+			operation = str(operation[0]) + str(operation[1])
+		else:
+			operation = operation[0]
 		tmp_column =  where.split(operation)[0].replace(" ","")
 		value =  where.split(operation)[1].strip()
 		tmp_wheres.append({tmp_column:[operation,value]})
@@ -345,5 +355,9 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations):
 	#表头
 	header_data = res_data[0]
 	res_data.remove(header_data)
+	# 引入limit 功能 
+	if len(limit) != 0 :
+		res_data = function.data_limit(res_data,limit)
+
 	function.console_print(header_data,res_data)
 

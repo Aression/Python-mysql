@@ -120,7 +120,6 @@ def table_where(table_path,where):
 	return res
 
 def select_data(table_info,data,wheres):
-
 	res = []
 	for sub_where in wheres :
 		operation = wheres[sub_where][0]
@@ -131,10 +130,10 @@ def select_data(table_info,data,wheres):
 		for x in data:
 			column = str(table_info[sub_where])
 			# 对列类型进行判断
-			if column == "str":
+			if column == "string":
 				column1 = "\"" + x[sub_where] + "\""
-				condition1 = "\"" + condition + "\""
-				if eval(column1+str(operation)+str(condition1)) == True:
+				#condition1 = "\"" + condition + "\""
+				if eval(column1+str(operation)+str(condition)) == True:
 					# 做交并运算时不支持dict 先转成json string
 					res.append(json.dumps(x))
 
@@ -281,3 +280,25 @@ def columns_filter(table_info,columns_filter,data):
 
 	# header_data 加入data 头部
 	return [header_data] + data
+
+def data_limit(data,limit):
+	'''
+	limit 格式 [n,y]
+	'''
+
+	tmp_data = []
+	tmp1_data = []
+	if len(data) == 0 :
+		return []
+	
+	if len(limit) == 1 :
+		for x in range(0,limit[0]):
+			# limit 超长处理
+			if x< len(data):
+				tmp_data.append(data[x])
+	else:
+		for x in range(limit[0],limit[0]+limit[1]):
+			if x< len(data):
+				tmp_data.append(data[x])
+
+	return tmp_data

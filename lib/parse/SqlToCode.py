@@ -98,15 +98,27 @@ def parseSql(sql):
             try:
                 # 从表中查询数据
                 if "from" in sql:
+                    # limit 检测
+                    limit = []
+                    if "limit" in sql :
+                        tmp_limit = sql.split("limit")[1]
+                        sql = sql.split("limit")[0]
+                        if "," in tmp_limit :
+                            limit.append(int(tmp_limit.replace(" ","").split(",")[0]))
+                            limit.append(int(tmp_limit.replace(" ","").split(",")[1]))
+                        else:
+                            limit.append(int(tmp_limit.replace(" ","")))
+
                     column = sql.split("select")[1].split("from")[0].replace(" ","")
                     table = sql.split("from")[1].split(" ")[1].strip()
-                    # 多列的情况
+                    
                     if "where" not in sql :
+                        # 多列的情况
                         if "," in column :
                             columns = column.split(",")
-                            db.select_from_table(table,columns,[])
+                            db.select_from_table(table,columns,[],limit)
                         elif len(column) != 0 :
-                            db.select_from_table(table,[column],[])
+                            db.select_from_table(table,[column],[],limit)
                     else:
                         columns = []
                         if "," in column :
@@ -116,7 +128,7 @@ def parseSql(sql):
                         try:
                             # 对条件进行匹配
                             tmp_where = sql.split("where")[1] 
-                            tmp_wheres = re.findall("([a-zA-Z0-9]+(\ )*(>|<|=)+(\ )*[a-zA-Z0-9'\"]+)",tmp_where)
+                            tmp_wheres = re.findall("([a-zA-Z0-9]+(\ )*[><=!]+(\ )*[a-zA-Z0-9'\"]+)",tmp_where)
     
                             # 将所以有的关系词放入relations 默认第一个为and
                             relations = ["and"]
@@ -129,9 +141,10 @@ def parseSql(sql):
                             
                             if len(wheres) != len(relations) :
                                 print("ERROR : where语句解析错误0")
-                            db.select_data_from_table_with_where(table,columns,wheres,relations)
+                            db.select_data_from_table_with_where(table,columns,wheres,relations,limit)
 
                         except Exception as e:
+                            print(e)
                             print("ERROR : where语句解析错误1")
                         
                 # 版本查询
@@ -202,7 +215,7 @@ def parseSql(sql):
                 if "where" not in sql  and len(sql_arr)==3:
                     db.delete_from_table(table,[])
                 else:
-                    wheres = re.findall("[a-zA-Z0-9]+(\ )*(>|<|=)+(\ )*[a-zA-Z0-9'\"]+",sql.split("where")[1])
+                    wheres = re.findall("[a-zA-Z0-9]+(\ )*[><=!]+(\ )*[a-zA-Z0-9'\"]+",sql.split("where")[1])
                     
             else:
                 print("ERROR : delete 格式错误")
