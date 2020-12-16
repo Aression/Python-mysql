@@ -95,16 +95,18 @@ def parseSql(sql):
         elif operation == "select" :
 
             try:
+            	# 从表中查询数据
                 if "from" in sql:
                     column = sql.split("select")[1].split("from")[0].replace(" ","")
                     table = sql.split("from")[1].split(" ")[1].strip()
-                    if "," in column :
-                        columns = column.split(",")
-                        db.select_from_table(table,columns,[])
-                        if "where" in sql:
-                            pass
-                    elif len(column) != 0 :
-                        db.select_from_table(table,[column],[])
+                    # 多列的情况
+                    if "where" not in sql :
+                    	if "," in column :
+                        	columns = column.split(",")
+                        	db.select_from_table(table,columns,[])
+                    	elif len(column) != 0 :
+                        	db.select_from_table(table,[column],[])
+                # 版本查询
                 elif "version()" in sql:
 
                     if len(sql.split(" ")) == 2:
@@ -116,7 +118,8 @@ def parseSql(sql):
                 print("ERROR : select 格式错误")
                 raise e
 
-        # insert into table (id,name) values ('1','2') , ('1','2');
+        #  insert 语句处理
+        #  insert into table (id,name) values ('1','2') , ('1','2');
         elif operation == "insert":
         	if sql_arr[1] == "into" and "values" in sql :
         		try:
@@ -125,11 +128,11 @@ def parseSql(sql):
         			columns = sql.split(")")[0].split("(")[1].replace(" ","").split(",")
         			# 获取插入的数据 按照values 进行分割,再按照) 进行分割
         			tmp_value = sql.split("values")[1].strip()
-        			values = re.findall("\(.*?\)",tmp_value)
+        			values = re.findall("\((.*?)\)",tmp_value)
 
         			# 将括号的内容转化为 列表 最终形式为 [[1,2],[1,2]] 并进行相应的类型转化
         			for x in range(0,len(values)):
-        				values[x] = values[x].replace("(","").replace(")","").split(",")
+        				values[x] = values[x].split(",")
 
         				# 对插入的数据进行类型处理
         				for y in range(0,len(values[x])):
@@ -162,12 +165,25 @@ def parseSql(sql):
 
         	else:
         		print("ERROR : SQL 解析错误")
+        # delete 语句处理
+        # delete from users where id = 1
         elif operation == "delete":
-        	pass
+        	if sql_arr[1] == "from":
+        		table = sql_arr[2]
+        		# 如果没有where 则直接清空表中数据
+        		if "where" not in sql  and len(sql_arr)==3:
+        			db.delete_from_table(table,[])
+        		else:
+        			wheres = re.findall("[a-zA-Z0-9]+(\ )*(>|<|=)+(\ )*[a-zA-Z0-9'\"]+",sql.split("where")[1])
+        			
+        	else:
+        		print("ERROR : delete 格式错误")
+
         else:
         	print("ERROR : 未知语句")
 
 
     except Exception as e:
-        print(e)
+        raise e
         print("ERROR : SQL 解析错误")
+# 

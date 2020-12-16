@@ -97,6 +97,13 @@ def insert_into_table(table_name,data):
 	# 尝试写入数据
 	try:
 		if os.path.isfile(tmp_table_path) == True :
+			# 监测数据是否存在
+			with open(tmp_table_path,"r") as f :
+				lines = f.readlines()
+				for line in lines :
+					if json.loads(line) in data :
+						print("ERROR : 暂不支持重复数据")
+						return 0
 			with open(tmp_table_path,"a") as f :
 				for x in data:
 					f.write(json.dumps(x) + "\n")
@@ -104,7 +111,7 @@ def insert_into_table(table_name,data):
 		else:
 			print("ERROR : 数据表{0}不存在".format(table_name))
 	except Exception as e:
-		print("ERROR : " + e)
+		raise e
 		pass
 
 def delete_from_table(table_name,where):
@@ -118,15 +125,26 @@ def delete_from_table(table_name,where):
 		return False
 	table_info = json.loads(table_info)
 
-	# 查询
-	res = function.table_where(tmp_table_path,where)
-	if res == False:
-		return 0
-
 	# 获取表中所有数据
 	data = function.get_all_data_from_table(tmp_table_path)
 	if data == False :
 		return False
+
+	# 若where 为空则将表清空
+	if len(where) == 0:
+		try:
+			with open(tmp_table_path,"w") as f :
+				f.write(json.dumps(table_info)+"\n")
+				print("成功删除{}条数据".format(len(data)))
+				return  0;
+		except Exception as e:
+			print("ERROR : 清空表时异常")
+			return 0
+		
+	# 查询
+	res = function.table_where(tmp_table_path,where)
+	if res == False:
+		return 0
 
 	# 判断是否于原表数据一样
 	if res == data:
@@ -138,7 +156,7 @@ def delete_from_table(table_name,where):
 			for x in data:
 				if x not in res: 
 					f.write(json.dumps(x) + "\n")
-			print("删除成功")
+			print("成功删除{0}条数据".format(len(res)))
 	except Exception as e:
 		raise e
 
@@ -159,6 +177,14 @@ def select_from_table(table_name,columns,where):
 	if table_info == False :
 		return 0
 	table_info = json.loads(table_info)
+
+	# 检测字段是否位于表中
+	for column in columns:
+		if column == "*":
+			continue
+		if column not in table_info :
+			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
+			return 0
 
 	header_data = []
 	res_tmp = []
@@ -296,7 +322,6 @@ def show_tables():
 		res.append({"Tables_in_{0}".format(env.CURRENT_DB) : x.split(".")[0]})
 	
 	function.console_print(["Tables_in_{0}".format(env.CURRENT_DB)],res)
-
 
 def select_version():
 	'''

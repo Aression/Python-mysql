@@ -69,6 +69,7 @@ def get_all_data_from_table(table_path):
 
 def table_where(table_path,where):
 	'''
+	where 格式 {"id":["=",1]} 键值为字段
 	'''
 	# 获取表头信息
 	table_info = get_table_info(table_path)
@@ -121,11 +122,83 @@ def table_where(table_path,where):
 	return res
 
 
+def select_data(table_info,data,wheres):
+
+	res = []
+	for sub_where in wheres :
+		operation = wheres[sub_where][0]
+		condition = wheres[sub_where][1]
+		if operation == "=":
+			operation+= "="
+
+		for x in data:
+			column = str(table_info[sub_where])
+			# 对列类型进行判断
+			if column == "str":
+				column1 = "\"" + x[sub_where] + "\""
+				condition1 = "\"" + condition + "\""
+				if eval(column1+str(operation)+str(condition1)) == True:
+					# 做交并运算时不支持dict 先转成json string
+					res.append(json.dumps(x))
+
+			if column == "int":
+				if eval(str(x[sub_where])+str(operation)+str(condition)) == True:
+					res.append(json.dumps(x))
+
+	return res
+
+def data_where(table_info,data,wheres):
+	'''
+	从数据中筛选合适的数据 支持 and or
+	wheres 格式为 [{"and": {"id":["=",1]}},{"or":{"id":[">",1]}}]
+	键值为 or and 
+	data 格式为 [{表头信息},{data},{data}]
+	'''
+
+	if len(data) == 0:
+		# 无数据返回
+		print("ERROR : 无可反回数据")
+		return 0
+
+	# 条件为空则全返回
+	if len(wheres) == 0:
+		return data
+
+	res = []
+	count = 0
+	for where in wheres:
+		relation = list(where.keys())[0]
+		res_tmp = select_data(table_info,data,where[relation])
+		if count == 0:
+			if relation == "and":
+				res = res_tmp
+		else:
+			if relation == "and":
+				# 交集运算
+				res = list(set(res).intersection(set(res_tmp)))
+			elif relation == "or":
+				# 并集运算
+				res = list(set(res).union(set(res_tmp)))
+		count += 1
+	
+	# 将经过交并运算的json-string转化为原格式
+	result = []
+	for x in res:
+		result.append(json.loads(x))
+
+	console_print(table_info,result)
+
+
+
+
 def console_print(header_data,json_data):
 	'''
 	header_data 格式为 ["column1","column2"]
 	json_data 格式为 [{"column1":"xx","column1":"xx"}]
 	'''
+	if len(header_data) == 0 :
+		print("暂无数据")
+		return 0
 	
 	column_len = len(header_data)
 	# 记录每列最长的长度
