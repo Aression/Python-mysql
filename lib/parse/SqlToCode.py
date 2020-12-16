@@ -9,6 +9,8 @@ def parseSql(sql):
     sql = sql.lower()
     sql = sql.split(";")[0]
     sql = sql.split("#")[0]
+    sql = sql.replace("||","or")
+    sql = sql.replace("&&","and")
     sql = sql.strip()
     sql = re.sub("\/\*.*\*\/"," ",sql) # 替换注释符
     sql = re.sub(" +", " ", sql) 
@@ -128,7 +130,7 @@ def parseSql(sql):
                         try:
                             # 对条件进行匹配
                             tmp_where = sql.split("where")[1] 
-                            tmp_wheres = re.findall("([a-zA-Z0-9]+(\ )*[><=!]+(\ )*[a-zA-Z0-9'\"]+)",tmp_where)
+                            tmp_wheres = re.findall("([a-zA-Z0-9]+[\ ]*[><=!]+[\ ]*[a-zA-Z0-9'\"]+)",tmp_where)
     
                             # 将所以有的关系词放入relations 默认第一个为and
                             relations = ["and"]
@@ -137,7 +139,7 @@ def parseSql(sql):
                             # 将所有的条件放入一个数组
                             wheres = []
                             for where in tmp_wheres :
-                                wheres.append(where[0])
+                                wheres.append(where.strip())
                             
                             if len(wheres) != len(relations) :
                                 print("ERROR : where语句解析错误0")
@@ -213,13 +215,48 @@ def parseSql(sql):
                 table = sql_arr[2]
                 # 如果没有where 则直接清空表中数据
                 if "where" not in sql  and len(sql_arr)==3:
-                    db.delete_from_table(table,[])
+                    db.delete_from_table(table,[],[])
                 else:
-                    wheres = re.findall("[a-zA-Z0-9]+(\ )*[><=!]+(\ )*[a-zA-Z0-9'\"]+",sql.split("where")[1])
-                    
+                    tmp_wheres = re.findall("[a-zA-Z0-9]+[\ ]*[><=!]+[\ ]*[a-zA-Z0-9'\"]+",sql.split("where")[1])
+                    wheres = []
+                    for where in tmp_wheres:
+                        wheres.append(where.strip())
+
+                    relations = ["and"]
+                    relations += re.findall("(or|and)",sql.split("where")[1])
+                    db.delete_from_table(table,wheres,relations)
+
             else:
                 print("ERROR : delete 格式错误")
+        # 更新操作 
+        # update table set a=1  where id = 1
+        # 转化为 db.update_from_table("table",{"a":1},{"id":["=",2]})
+        elif operation == "update":
+            table = sql_arr[1]
+            if "where" in sql :
+                tmp_sets = sql.split("set")[1].split("where")[0].strip()
+                if "," in tmp_sets:
+                    tmp_sets = tmp_sets.split(",")
+                else:
+                    tmp_sets = [tmp_sets]
 
+                # 匹配set 并放入sets
+                sets = {}
+                for _set in tmp_sets:
+                    sets.update({_set.split("=")[0]:_set.split("=")[1]})
+                tmp_wheres = re.findall("[a-zA-Z0-9]+[\ ]*[><=!]+[\ ]*[a-zA-Z0-9'\"]+",sql.split("where")[1])
+                
+                # where子句匹配
+                wheres = []
+                for where in tmp_wheres:
+                    wheres.append(where.strip())
+
+                relations = ["and"]
+                relations += re.findall("(or|and)",sql.split("where")[1])
+
+                db.update_from_table(table,sets,wheres,relations)
+            else:
+                print("ERROR : update解析错误")
         else:
             print("ERROR : 未知语句")
 

@@ -155,7 +155,7 @@ def insert_into_table(table_name,data):
 		raise e
 		pass
 
-def delete_from_table(table_name,where):
+def delete_from_table(table_name,wheres,relations):
 	'''
 	where 为条件 格式为字典类型 如 {"id":[">","3"],"name":["=","张三"]}
 	'''
@@ -172,7 +172,7 @@ def delete_from_table(table_name,where):
 		return False
 
 	# 若where 为空则将表清空
-	if len(where) == 0:
+	if len(wheres) == 0:
 		try:
 			with open(tmp_table_path,"w") as f :
 				f.write(json.dumps(table_info)+"\n")
@@ -183,7 +183,26 @@ def delete_from_table(table_name,where):
 			return 0
 		
 	# 查询
-	res = function.table_where(tmp_table_path,where)
+
+	tmp_wheres = []
+	for where in wheres:
+		operation = re.findall("[><=!]+",where)
+		if len(operation) == 2:
+			operation = str(operation[0]) + str(operation[1])
+		else:
+			operation = operation[0]
+		tmp_column =  where.split(operation)[0].replace(" ","")
+		value =  where.split(operation)[1].strip()
+		tmp_wheres.append({tmp_column:[operation,value]})
+
+	# 转化成最终形式
+	# [{"and": {"id":["=",1]}},{"or":{"id":[">",1]}}]
+	tmp_where = []
+	for x in range(0,len(relations)):
+		tmp_where.append({relations[x]:tmp_wheres[x]})
+
+
+	res =  function.data_where(table_info,data,tmp_where)
 	if res == False:
 		return 0
 
@@ -229,7 +248,7 @@ def select_from_table(table_name,columns,where,limit):
 
 	function.console_print(header_data,res_data)
 
-def update_from_table(table_name,set_rule,where):
+def update_from_table(table_name,set_rule,wheres,relations):
 	'''
 	set格式   set name = xxx ,id = xx  转化为 {"name":"xxxx","id":"xxxx"}
 	'''
@@ -245,15 +264,33 @@ def update_from_table(table_name,set_rule,where):
 		return 0
 	table_info = json.loads(table_info)
 
-	# 筛选满足条件的记录
-	res = function.table_where(tmp_table_path,where)
-	if res == False :
-		return 0
-
 	# 获取所有记录
 	data = function.get_all_data_from_table(tmp_table_path)
 	if data == False :
 		return 0
+
+	# 筛选满足条件的记录
+	tmp_wheres = []
+	for where in wheres:
+		operation = re.findall("[><=!]+",where)
+		if len(operation) == 2:
+			operation = str(operation[0]) + str(operation[1])
+		else:
+			operation = operation[0]
+		tmp_column =  where.split(operation)[0].replace(" ","")
+		value =  where.split(operation)[1].strip()
+		tmp_wheres.append({tmp_column:[operation,value]})
+
+	# 转化成最终形式
+	# [{"and": {"id":["=",1]}},{"or":{"id":[">",1]}}]
+	tmp_where = []
+	for x in range(0,len(relations)):
+		tmp_where.append({relations[x]:tmp_wheres[x]})
+
+	# 
+	res = function.data_where(table_info,data,tmp_where)
+
+	
 
 	# 记录未被修改的数据
 	tmp_dict = []
@@ -333,7 +370,6 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations,limit)
 	tmp_wheres = []
 	for where in wheres:
 		operation = re.findall("[><=!]+",where)
-		print(operation)
 		if len(operation) == 2:
 			operation = str(operation[0]) + str(operation[1])
 		else:
@@ -344,11 +380,12 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations,limit)
 
 	# 转化成最终形式
 	# [{"and": {"id":["=",1]}},{"or":{"id":[">",1]}}]
-	tmp = []
+	tmp_where = []
 	for x in range(0,len(relations)):
-		tmp.append({relations[x]:tmp_wheres[x]})
+		tmp_where.append({relations[x]:tmp_wheres[x]})
 
-	res_data = function.data_where(table_info,data,tmp)
+	# 
+	res_data = function.data_where(table_info,data,tmp_where)
 
 	res_data = function.columns_filter(table_info,columns,res_data)
 

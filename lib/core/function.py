@@ -112,7 +112,6 @@ def table_where(table_path,where):
 				condition1 = "\"" + condition + "\""
 				if eval(column1+str(operation)+str(condition1)) == True:
 					res.append(x)
-
 			if column == "int":
 				if eval(str(x[sub_where])+str(operation)+str(condition)) == True:
 					res.append(x)
@@ -133,6 +132,7 @@ def select_data(table_info,data,wheres):
 			if column == "string":
 				column1 = "\"" + x[sub_where] + "\""
 				#condition1 = "\"" + condition + "\""
+				
 				if eval(column1+str(operation)+str(condition)) == True:
 					# 做交并运算时不支持dict 先转成json string
 					res.append(json.dumps(x))
@@ -200,8 +200,8 @@ def console_print(header_data,json_data):
 	# 对头进行长度统计
 	count = 0
 	for x in header_data:
-		if len(x) > column_max_len_array[count]:
-			column_max_len_array[count] = len(x)
+		if len(x) > column_max_len_array[count]:			
+			column_max_len_array[count] = len(x) 
 		count += 1
 
 	# 对元素进行长度统计
