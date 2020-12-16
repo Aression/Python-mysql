@@ -1,5 +1,6 @@
 import os
 import json
+import re
 import lib.core.env as env
 import lib.core.function as function
 
@@ -331,3 +332,69 @@ def select_version():
 		print("ERROR : 环境错误")
 
 	function.console_print(["version"],[{"version":env.VERSION}])
+
+def select_data_from_table_with_where(table_name,columns,wheres,relations):
+
+	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
+
+	# 获取表结构
+	table_info = function.get_table_info(tmp_table_path)
+	if table_info == False :
+		return 0
+	table_info = json.loads(table_info)
+
+	# 获取表中所有数据
+	data = function.get_all_data_from_table(tmp_table_path)
+	if data == False :
+		return False
+
+	# 将wheres 转化成函数能处理的类型
+	#id = 1 编程 {"id":["=",1]}}
+	
+	tmp_wheres = []
+	for where in wheres:
+		operation = re.findall("(>|=|<)+",where)[0]
+		tmp_column =  where.split(operation)[0].replace(" ","")
+		value =  where.split(operation)[1].strip()
+		tmp_wheres.append({tmp_column:[operation,value]})
+
+	# 转化成最终形式
+	# [{"and": {"id":["=",1]}},{"or":{"id":[">",1]}}]
+	tmp = []
+	for x in range(0,len(relations)):
+		tmp.append({relations[x]:tmp_wheres[x]})
+
+	res_data = function.data_where(table_info,data,tmp)
+
+	# 按列 筛选
+	# 检测字段是否位于表中
+	for column in columns:
+		if column == "*":
+			continue
+		if column not in table_info :
+			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
+			return 0
+
+	header_data = []
+	res_tmp = []
+	# 按列筛选
+	if "*" == columns[0]:
+		for x in table_info:
+			header_data.append(x)
+	else:
+		# 过滤表头
+		for x in table_info:
+			if x in columns :
+				header_data.append(x)
+		# 过滤数据
+		for x in res_data:
+			tmp_dict = {}
+			for column in  x :
+				if column in columns :
+					tmp_dict.update({column : x[column]})
+			res_tmp.append(tmp_dict)
+
+		res_data = res_tmp
+
+	function.console_print(header_data,res_data)
+

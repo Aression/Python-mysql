@@ -5,11 +5,11 @@ import json
 
 if __name__ == '__main__':
 
-	'''while True:
+	while True:
 		sql = input("sql > ")
 		print("")
 		SqlToCode.parseSql(sql)
-		print("")'''
+		print("")
 	#db.create_db("test") #数据库创建
 	#db.select_db("test1")
 	#db.create_table("bbb",{"id":"int","name":"string"}) #创建表

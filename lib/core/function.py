@@ -186,7 +186,8 @@ def data_where(table_info,data,wheres):
 	for x in res:
 		result.append(json.loads(x))
 
-	console_print(table_info,result)
+	return result
+	#console_print(table_info,result)
 
 
 
