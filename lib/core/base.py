@@ -13,9 +13,9 @@ def create_db(dbname):
 			os.mkdir(db_tmp)
 			print("数据库{0}创建成功".format(dbname))
 		else :
-			print("ERROR : 数据库已存在")
+			print("\033[1;31mERROR : 数据库已存在\033[0m")
 	except Exception as e:
-		print("ERROR : 数据库创建失败")
+		print("\033[1;31mERROR : 数据库创建失败\033[0m")
 
 def select_db(dbname):
 	db_tmp = env.DB_PATH + "/" + dbname
@@ -24,7 +24,7 @@ def select_db(dbname):
 		env.CURRENT_PATH = db_tmp
 		print("成功切换到数据库{0}".format(dbname))
 	else:
-		print("ERROR : 数据库不存在")
+		print("\033[1;31mERROR : 数据库不存在\033[0m")
 
 def create_table(table_name,columns):
 	'''
@@ -32,7 +32,7 @@ def create_table(table_name,columns):
 	columns = {'id': 'int', 'name': 'string'}
 	'''
 	if env.CURRENT_DB == "":
-		print("ERROR : 未选择数据库")
+		print("\033[1;31mERROR : 未选择数据库\033[0m")
 		return 0
 
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
@@ -43,9 +43,9 @@ def create_table(table_name,columns):
 				f.write(json.dumps(columns) + "\n")
 				print("表{0}创建成功".format(table_name))
 		else:
-			print("ERROR : 表{0}已存在".format(table_name))
+			print("\033[1;31mERROR : 表{0}已存在\033[0m".format(table_name))
 	except Exception as e:
-		print("ERROR : 表创建失败，可能原因为data目录没有权限")
+		print("\033[1;31mERROR : 表创建失败，可能原因为data目录没有权限\033[0m")
 		print(e)
 
 def show_databases():
@@ -53,10 +53,10 @@ def show_databases():
 	try:
 		db_list = os.listdir(env.DB_PATH)
 		if len(db_list) == 0 :
-			print("ERROR : 暂无数据库")
+			print("\033[1;31mERROR : 暂无数据库\033[0m")
 			return 0
 	except Exception as e:
-		print("ERROR : 暂无数据库")
+		print("\033[1;31mERROR : 暂无数据库\033[0m")
 	
 	res = []
 	for x in db_list:
@@ -69,7 +69,7 @@ def show_tables():
 	查看数据库中表的信息
 	'''
 	if env.CURRENT_DB == "":
-		print("ERROR : 未选择数据库")
+		print("\033[1;31mERROR : 未选择数据库\033[0m")
 		return 0
 	table_list = os.listdir(env.CURRENT_PATH)
 
@@ -84,7 +84,7 @@ def select_version():
 	查看数据库版本
 	'''
 	if env.VERSION == "" :
-		print("ERROR : 环境错误")
+		print("\033[1;31mERROR : 环境错误\033[0m")
 
 	function.console_print(["version"],[{"version":env.VERSION}])
 
@@ -96,24 +96,24 @@ def drop_db(dbname):
 			os.removedirs(db_tmp)
 			print("成功删除库{0}".format(dbname))
 		else:
-			print("ERROR : 删除库错误 库{0}不存在".format(dbname))
+			print("\033[1;31mERROR : 删除库错误 库{0}不存在\033[0m".format(dbname))
 	except Exception as e:
-		print("ERROR : 删除库错误 原因未知")
+		print("\033[1;31mERROR : 删除库错误 原因未知\033[0m")
 
 def drop_table(table_name):
 	# 想要删除表的路径
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 	if env.CURRENT_DB == "":
-		print("ERROR : 未选择数据库")
+		print("\033[1;31mERROR : 未选择数据库\033[0m")
 		return 0
 	try:
 		if os.path.isfile(tmp_table_path) == True :
 			os.remove(tmp_table_path)
 			print("成功删除表{0}".format(table_name))
 		else:
-			print("ERROR : 删除表错误 表{0}不存在".format(table_name))
+			print("\033[1;31mERROR : 删除表错误 表{0}不存在\033[0m".format(table_name))
 	except Exception as e:
-		print("ERROR : 删除表错误 原因未知")
+		print("\033[1;31mERROR : 删除表错误 原因未知\033[0m")
 		print(e)
 
 def insert_into_table(table_name,data):
@@ -123,7 +123,7 @@ def insert_into_table(table_name,data):
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
 	if os.path.isfile(tmp_table_path) == False :
-		print("ERROR : 数据表{0}不存在".format(table_name))
+		print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
 		return 0
 
 	# 检查表头是否存在
@@ -143,14 +143,14 @@ def insert_into_table(table_name,data):
 				lines = f.readlines()
 				for line in lines :
 					if json.loads(line) in data :
-						print("ERROR : 暂不支持重复数据")
+						print("\033[1;31mERROR : 暂不支持重复数据\033[0m")
 						return 0
 			with open(tmp_table_path,"a") as f :
 				for x in data:
 					f.write(json.dumps(x) + "\n")
 				print("数据插入成功")
 		else:
-			print("ERROR : 数据表{0}不存在".format(table_name))
+			print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
 	except Exception as e:
 		raise e
 		pass
@@ -179,7 +179,7 @@ def delete_from_table(table_name,wheres,relations):
 				print("成功删除{}条数据".format(len(data)))
 				return  0;
 		except Exception as e:
-			print("ERROR : 清空表时异常")
+			print("\033[1;31mERROR : 清空表时异常\033[0m")
 			return 0
 		
 	# 查询
@@ -208,7 +208,7 @@ def delete_from_table(table_name,wheres,relations):
 
 	# 判断是否于原表数据一样
 	if res == data:
-		print("ERROR : 无可满足条件的数据")
+		print("\033[1;31mERROR : 无可满足条件的数据\033[0m")
 		return 0
 	try:
 		with open(tmp_table_path,"w") as f:
@@ -255,7 +255,7 @@ def update_from_table(table_name,set_rule,wheres,relations):
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
 	if os.path.isfile(tmp_table_path) == False :
-		print("ERROR : 数据表{0}不存在".format(table_name))
+		print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
 		return 0
 
 	# 检查表头是否存在
@@ -303,9 +303,18 @@ def update_from_table(table_name,set_rule,wheres,relations):
 	# 检测列是否存在
 	for x in set_rule:
 		if x not in table_info:
-			print("ERROR : set 中列{0}不存在".format(x))
+			print("\033[1;31mERROR : set 中列{0}不存在\033[0m".format(x))
 			return 0
-
+	# 对·set值进行约束、规范化
+	for x in set_rule:
+		if "\"" in set_rule[x] or "'" in set_rule[x]:
+			set_rule[x] = set_rule[x].replace("\"","").replace("'","")
+		else:
+			try:
+				set_rule[x] = int(set_rule[x])
+			except Exception as e:
+				print("\033[1;31mERROR : set 中值错误\033[0m")
+			
 	# 属性修改
 	for x in set_rule :
 		column = x
@@ -333,7 +342,7 @@ def desc_from_table(table_name):
 	打印 表结构
 	'''
 	if env.CURRENT_DB == "":
-		print("ERROR : 未选择数据库")
+		print("\033[1;31mERROR : 未选择数据库\033[0m")
 		return 0
 
 	tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
@@ -398,3 +407,29 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations,limit)
 
 	function.console_print(header_data,res_data)
 
+def table_join(table_names):
+
+	tmp_table_paths = []
+	for table_name in table_names :
+		tmp_table_paths.append(env.CURRENT_PATH + "/" + table_name + ".json")
+
+	join_tmp_table = []
+	pass
+
+
+
+def help():
+
+	print("\033[33m本数据库按照MYSQL 为原型进行修改，大致操作同mysql\033[0m")
+	print("\033[33m支持SQL 语句大小写、注释符/**/ #、 || && 、 where 支持比较远算符 > >= < <= = != \033[0m")
+	print("")
+	print("目前数据库支持的操作如下:")
+	print("\033[32m1. SELECT 列名,列名... FROM 表名 [WHERE 条件 [[AND] [OR]] [LIMIT N 或者 N,M]\033[0m")
+	print("\033[32m2. UPDATE 表名 SET 列名=新值, 列名=新值 [WHERE 条件 [AND [OR]]\033[0m")
+	print("\033[32m3. DELETE FROM 表名 [WHERE  条件 [AND [OR]]\033[0m")
+	print("\033[32m4. INSERT INTO 表名 ( 列名,列名,...)VALUES (值,值,...)\033[0m")
+	print("\033[32m5. USE 数据库名 \033[0m")
+	print("\033[32m6. CREATE [DATABASE|TABLE] [库名|表名(列名 类型,列名 类型....)]\033[0m")
+	print("\033[32m7. DROP [DATABASE|TABLE] [库名|表名]\033[0m")
+	print("\033[32m8. DESC 表名\033[0m")
+	print("\033[32m9. SHOW [DATABASES|TABLES]\033[0m")

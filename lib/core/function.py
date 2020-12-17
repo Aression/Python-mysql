@@ -13,10 +13,10 @@ def get_table_info(table_path):
 				info = f.readline()
 				return info
 		else:
-			print("ERROR : 数据表{0}不存在".format(table_name))
+			print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
 			return False
 	except Exception as e:
-		print("ERROR : 获取表信息失败")
+		print("\033[1;31mERROR : 获取表信息失败\033[0m")
 		return False
 
 def check_data_with_table_format(table_name,data):
@@ -31,18 +31,18 @@ def check_data_with_table_format(table_name,data):
 	try:
 		# 长度检查
 		if len(table_info) != len(data) :
-			print("ERROR : 数据与信息表结构不符")
+			print("\033[1;31mERROR : 数据与信息表结构不符\033[0m")
 			return False
 		# 字段检查
 		for columns in data:
 			if 	columns not in table_info:
-				print("ERROR : 列{0}不存在".format(columns))
+				print("\033[1;31mERROR : 列{0}不存在\033[0m".format(columns))
 				return False
 		return True
 
 	except Exception as e:
 		print(e)
-		print("ERROR : 发生异常")
+		print("\033[1;31mERROR : 发生异常\033[0m")
 		return False
 
 def get_all_data_from_table(table_path):
@@ -50,7 +50,7 @@ def get_all_data_from_table(table_path):
 	以json 格式进行返回 [data1,data2...]
 	'''
 	if os.path.isfile(table_path) == False:
-		print("ERROR : 文件不存在")
+		print("\033[1;31mERROR : 文件不存在\033[0m")
 		return False
 
 	try:
@@ -79,7 +79,7 @@ def table_where(table_path,where):
 	#检查字段是否存在于表中
 	for columns in where:
 		if columns not in table_info:
-			print("ERROR : 字段{0} 不存在于表{1}中".format(columns,table_name))
+			print("\033[1;31mERROR : 字段{0} 不存在于表{1}中\033[0m".format(columns,table_name))
 			return False
 
 	# 获取表中所有数据
@@ -98,24 +98,8 @@ def table_where(table_path,where):
 	# eval 构造的为 id=2
 	# 即判断data 中id=2的 记录
 	
-	for sub_where in where :
-		operation = where[sub_where][0]
-		condition = where[sub_where][1]
-		if operation == "=":
-			operation+= "="
-
-		for x in data:
-			column = str(table_info[sub_where])
-			# 对列类型进行判断
-			if column == "str":
-				column1 = "\"" + x[sub_where] + "\""
-				condition1 = "\"" + condition + "\""
-				if eval(column1+str(operation)+str(condition1)) == True:
-					res.append(x)
-			if column == "int":
-				if eval(str(x[sub_where])+str(operation)+str(condition)) == True:
-					res.append(x)
-
+	res = select_data(table_info,data,where)
+	del res[0]
 	return res
 
 def select_data(table_info,data,wheres):
@@ -152,7 +136,7 @@ def data_where(table_info,data,wheres):
 
 	if len(data) == 0:
 		# 无数据返回
-		print("ERROR : 无可反回数据")
+		print("\033[1;31mERROR : 无可反回数据\033[0m")
 		return 0
 
 	# 条件为空则全返回
@@ -254,7 +238,7 @@ def columns_filter(table_info,columns_filter,data):
 		if column == "*":
 			continue
 		if column not in table_info :
-			print("ERROR : {0}表中没有字段{1}".format(table_name,column))
+			print("\033[1;31mERROR : {0}表中没有字段{1}\033[0m".format(table_name,column))
 			return 0
 
 	header_data = []

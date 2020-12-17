@@ -2,6 +2,15 @@ import lib.core.function as function
 import lib.core.base as db
 import re
 
+bye = '''
+____             
+| __ ) _   _  ___ 
+|  _ \| | | |/ _ \
+
+| |_) | |_| |  __/
+|____/ \__, |\___|
+       |___/        
+'''
 
 def parseSql(sql):
 
@@ -18,16 +27,16 @@ def parseSql(sql):
     # 检测括号配对
     if sql.count("(") != sql.count(")"):
         if sql.count("(")>sql.count(")"):
-            print("ERROR : 意外符号(")
+            print("\033[1;31mERROR : 意外符号(\033[0m")
         else:
-            print("ERROR : 意外符号)")
+            print("\033[1;31mERROR : 意外符号)\033[0m")
         return 0
     # 单双引号检测
     if sql.count("'") % 2 != 0 :
-        print("ERROR : 意外符号'")
+        print("\033[1;31mERROR : 意外符号'\033[0m")
         return 0
     if sql.count('"') % 2 != 0 :
-        print("ERROR : 意外符号\"")
+        print("\033[1;31mERROR : 意外符号\"\033[0m")
         return 0
 
     sql_arr = sql.split(" ")
@@ -42,7 +51,7 @@ def parseSql(sql):
             elif operation1 == "tables":
                 db.show_tables()
             else:
-                print("ERROR : 未知操作 {0}".format(operation1))
+                print("\033[1;31mERROR : 未知操作 {0}\033[0m".format(operation1))
         # use 命令
         elif operation == "use":
             operation1 = sql_arr[1]
@@ -55,7 +64,7 @@ def parseSql(sql):
 
         # 退出
         elif operation == "exit" or operation == "quit":
-            exit("bye~ \n")
+            exit("\033[32m" + bye + "\033[0m")
 
         elif operation == "drop":
 
@@ -66,7 +75,7 @@ def parseSql(sql):
             elif operation1 == "database":
                 dbname = sql_arr[2]
             else:
-                print("ERROR : 未知操作 {0}".format(operation1))
+                print("\033[1;31mERROR : 未知操作 {0}\033[0m".format(operation1))
 
         # 创建表 或者 库
         elif operation == "create":
@@ -89,7 +98,7 @@ def parseSql(sql):
                     if table_name != None or len(columns):
                         db.create_table(table_name, columns)
                     else:
-                        print("ERROR : create 格式错误")
+                        print("\033[1;31mERROR : create 格式错误\033[0m")
 
                 except Exception as e:
                     raise e
@@ -142,12 +151,12 @@ def parseSql(sql):
                                 wheres.append(where.strip())
                             
                             if len(wheres) != len(relations) :
-                                print("ERROR : where语句解析错误0")
+                                print("\033[1;31mERROR : where语句解析错误0\033[0m")
                             db.select_data_from_table_with_where(table,columns,wheres,relations,limit)
 
                         except Exception as e:
                             print(e)
-                            print("ERROR : where语句解析错误1")
+                            print("\033[1;31mERROR : where语句解析错误1\033[0m")
                         
                 # 版本查询
                 elif "version()" in sql:
@@ -155,10 +164,10 @@ def parseSql(sql):
                     if len(sql.split(" ")) == 2:
                            db.select_version()
                     else:
-                        print("ERROR : SQL 解析错误")
+                        print("\033[1;31mERROR : SQL 解析错误\033[0m")
 
             except Exception as e:
-                print("ERROR : select 格式错误")
+                print("\033[1;31mERROR : select 格式错误\033[0m")
                 raise e
 
         #  insert 语句处理
@@ -185,12 +194,12 @@ def parseSql(sql):
                                 try:
                                     values[x][y] = int(values[x][y])
                                 except Exception as e:
-                                    print("ERROR : 类型转化错误 检查字符串是否被引号包裹")
+                                    print("\033[1;31mERROR : 类型转化错误 检查字符串是否被引号包裹\033[0m")
 
                     # 检测 列与 value 的列是否相等
                     for x in values:
                         if len(columns) != len(x):
-                            print("ERROR : 输入的列数不符")
+                            print("\033[1;31mERROR : 输入的列数不符\033[0m")
                     # 转化为接口能处理的形式
                     res_dict = []
                     for value in values:
@@ -207,7 +216,7 @@ def parseSql(sql):
                     raise e
 
             else:
-                print("ERROR : SQL 解析错误")
+                print("\033[1;31mERROR : SQL 解析错误\033[0m")
         # delete 语句处理
         # delete from users where id = 1
         elif operation == "delete":
@@ -227,7 +236,7 @@ def parseSql(sql):
                     db.delete_from_table(table,wheres,relations)
 
             else:
-                print("ERROR : delete 格式错误")
+                print("\033[1;31mERROR : delete 格式错误\033[0m")
         # 更新操作 
         # update table set a=1  where id = 1
         # 转化为 db.update_from_table("table",{"a":1},{"id":["=",2]})
@@ -243,7 +252,7 @@ def parseSql(sql):
                 # 匹配set 并放入sets
                 sets = {}
                 for _set in tmp_sets:
-                    sets.update({_set.split("=")[0]:_set.split("=")[1]})
+                    sets.update({_set.split("=")[0].strip():_set.split("=")[1].strip()})
                 tmp_wheres = re.findall("[a-zA-Z0-9]+[\ ]*[><=!]+[\ ]*[a-zA-Z0-9'\"]+",sql.split("where")[1])
                 
                 # where子句匹配
@@ -256,10 +265,12 @@ def parseSql(sql):
 
                 db.update_from_table(table,sets,wheres,relations)
             else:
-                print("ERROR : update解析错误")
+                print("\033[1;31mERROR : update解析错误\033[0m")
+        elif operation == "help":
+        	db.help()
         else:
-            print("ERROR : 未知语句")
+            print("\033[1;31mERROR : 未知语句\033[0m")
 
     except Exception as e:
         raise e
-        print("ERROR : SQL 解析错误")
+        print("\033[1;31mERROR : SQL 解析错误\033[0m")
