@@ -407,21 +407,72 @@ def select_data_from_table_with_where(table_name,columns,wheres,relations,limit)
 
 	function.console_print(header_data,res_data)
 
-def table_join(table_names):
+def table_join(table_names,columns,wheres,limit):
 
 	tmp_table_paths = []
 	for table_name in table_names :
 		tmp_table_paths.append(env.CURRENT_PATH + "/" + table_name + ".json")
 
 	join_tmp_table = []
-	pass
 
+	if len(tmp_table_paths) != 2:
+		print("\033[1;31mERROR : 暂不支持多个表\033[0m")
+		return 0
 
+	# 获取所有表的表头信息
+	table_head_arr = []
+	for table_path in tmp_table_paths:
+		tmp_head = function.get_table_info(table_path)
+		if tmp_head == False:
+			return 0
+		table_head_arr.append(list(json.loads(tmp_head).keys())) 
+
+	# 获取所有表的内容
+	tables_data_arr = []
+	for table_path in tmp_table_paths:
+		tmp_data = function.get_all_data_from_table(table_path)
+		if tmp_data == False:
+			return 0
+		tables_data_arr.append(tmp_data)
+
+	# 检查表头是否有重复元素，存在则对第二个表起别名
+	# 仅考虑两个表的清框
+	repat_columns = list(set(table_head_arr[0]).intersection(set(table_head_arr[1])))
+	for x in range(0,len(table_head_arr[1])):
+		if table_head_arr[1][x] in repat_columns:
+			table_head_arr[1][x] = "_" + table_head_arr[1][x]
+
+	tmp_table_data = []
+	for datas in tables_data_arr[1]:
+		tmp_dict = {}
+		for data in datas:
+			if data in repat_columns:
+				tmp_dict.update({"_" + data:datas[data]})
+			else:
+				tmp_dict.update({data:datas[data]})
+		tmp_table_data.append(tmp_dict)
+
+	tables_data_arr[1] = tmp_table_data
+	# 表头合并
+	table_head = table_head_arr[0] + table_head_arr[1]
+
+	# 表的连接 - 笛卡尔积
+	dikaer = []
+	for x in range(0,len(tables_data_arr[0])):
+		for y in range(0,len(tables_data_arr[1])):
+			tmp = {**tables_data_arr[0][x],**tables_data_arr[1][y] }
+			dikaer.append(tmp)
+
+	# 引入limit 功能 
+	if len(limit) != 0 :
+		dikaer = function.data_limit(dikaer,limit)
+
+	function.console_print(table_head,dikaer)
 
 def help():
 
-	print("\033[33m本数据库按照MYSQL 为原型进行修改，大致操作同mysql\033[0m")
-	print("\033[33m支持SQL 语句大小写、注释符/**/ #、 || && 、 where 支持比较远算符 > >= < <= = != \033[0m")
+	print("\033[1;35m本数据库按照MYSQL 为原型进行修改，大致操作同mysql\033[0m")
+	print("\033[1;35m支持SQL 语句大小写、注释符/**/ #、 || && 、 where 支持比较远算符 > >= < <= = != \033[0m")
 	print("")
 	print("目前数据库支持的操作如下:")
 	print("\033[32m1. SELECT 列名,列名... FROM 表名 [WHERE 条件 [[AND] [OR]] [LIMIT N 或者 N,M]\033[0m")
@@ -433,3 +484,4 @@ def help():
 	print("\033[32m7. DROP [DATABASE|TABLE] [库名|表名]\033[0m")
 	print("\033[32m8. DESC 表名\033[0m")
 	print("\033[32m9. SHOW [DATABASES|TABLES]\033[0m")
+	print("\033[32m10. SELECT * FROM 表名,表名 [limit N 或者 N,M] # 表的连接")

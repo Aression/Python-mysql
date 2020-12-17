@@ -50,7 +50,7 @@ def get_all_data_from_table(table_path):
 	以json 格式进行返回 [data1,data2...]
 	'''
 	if os.path.isfile(table_path) == False:
-		print("\033[1;31mERROR : 文件不存在\033[0m")
+		print("\033[1;31mERROR : 表不存在\033[0m")
 		return False
 
 	try:
@@ -171,7 +171,7 @@ def data_where(table_info,data,wheres):
 def console_print(header_data,json_data):
 	'''
 	header_data 格式为 ["column1","column2"]
-	json_data 格式为 [{"column1":"xx","column1":"xx"}]
+	json_data 格式为 [{"column1":"xx","column2":"xx"}]
 	'''
 	if len(header_data) == 0 :
 		print("暂无数据")

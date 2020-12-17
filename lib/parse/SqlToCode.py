@@ -122,6 +122,35 @@ def parseSql(sql):
 
                     column = sql.split("select")[1].split("from")[0].replace(" ","")
                     table = sql.split("from")[1].split(" ")[1].strip()
+                    # 多字段检测
+                    columns = []
+                    if "," in column :
+                        columns = column.split(",")
+                    else:
+                        columns = [column]
+                    # 多表检测
+                    if "," in table:
+                        tables = table.split(",")
+                        wheres = []
+                        if "where" in sql.split("from")[1]:
+                            # 对条件进行匹配
+                            tmp_where = sql.split("where")[1] 
+                            tmp_wheres = re.findall("([a-zA-Z0-9]+[\ ]*[><=!]+[\ ]*[a-zA-Z0-9'\"]+)",tmp_where)    
+                            
+                            # 将所以有的关系词放入relations 默认第一个为and
+                            relations = ["and"]
+                            relations += re.findall("(or|and)",tmp_where)    
+                            
+                            # 将所有的条件放入一个数组
+                            
+                            for where in tmp_wheres :
+                                wheres.append(where.strip())  
+    
+                            if len(wheres) != len(relations) :
+                                print("\033[1;31mERROR : where语句解析错误0\033[0m")
+
+                        db.table_join(tables,columns,wheres,limit)
+                        return 0  
                     
                     if "where" not in sql :
                         # 多列的情况
@@ -131,11 +160,7 @@ def parseSql(sql):
                         elif len(column) != 0 :
                             db.select_from_table(table,[column],[],limit)
                     else:
-                        columns = []
-                        if "," in column :
-                            columns = column.split(",")
-                        else:
-                            columns = [column]
+                        
                         try:
                             # 对条件进行匹配
                             tmp_where = sql.split("where")[1] 
@@ -266,8 +291,9 @@ def parseSql(sql):
                 db.update_from_table(table,sets,wheres,relations)
             else:
                 print("\033[1;31mERROR : update解析错误\033[0m")
+
         elif operation == "help":
-        	db.help()
+            db.help()
         else:
             print("\033[1;31mERROR : 未知语句\033[0m")
 
