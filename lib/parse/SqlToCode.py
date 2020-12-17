@@ -1,6 +1,7 @@
 import lib.core.function as function
 import lib.core.base as db
 import re
+import os
 
 bye = '''
 ____             
@@ -64,7 +65,8 @@ def parseSql(sql):
 
         # 退出
         elif operation == "exit" or operation == "quit":
-            exit("\033[32m" + bye + "\033[0m")
+            print("\033[32m" + bye + "\033[0m")
+            os._exit(0)
 
         elif operation == "drop":
 

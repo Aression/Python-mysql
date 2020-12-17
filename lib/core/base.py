@@ -31,6 +31,10 @@ def create_table(table_name,columns):
 	create table test(id int,name string)
 	columns = {'id': 'int', 'name': 'string'}
 	'''
+	for column in columns:
+		if columns[column] not in ["string","int"]:
+			print("\033[1;31mERROR : 仅支持的数据类型为 int string\033[0m")
+			return 0 
 	if env.CURRENT_DB == "":
 		print("\033[1;31mERROR : 未选择数据库\033[0m")
 		return 0
@@ -57,6 +61,7 @@ def show_databases():
 			return 0
 	except Exception as e:
 		print("\033[1;31mERROR : 暂无数据库\033[0m")
+		return 0
 	
 	res = []
 	for x in db_list:
@@ -481,8 +486,11 @@ def help():
 	print("\033[32m3. DELETE FROM 表名 [WHERE  条件 [AND [OR]]\033[0m")
 	print("\033[32m4. INSERT INTO 表名 ( 列名,列名,...)VALUES (值,值,...)\033[0m")
 	print("\033[32m5. USE 数据库名 \033[0m")
-	print("\033[32m6. CREATE [DATABASE|TABLE] [库名|表名(列名 类型,列名 类型....)]\033[0m")
+	print("\033[32m6. CREATE [DATABASE|TABLE] [库名|表名(列名 类型,列名 类型....)]  # 类型只支持int string两种类型\033[0m")
 	print("\033[32m7. DROP [DATABASE|TABLE] [库名|表名]\033[0m")
 	print("\033[32m8. DESC 表名\033[0m")
 	print("\033[32m9. SHOW [DATABASES|TABLES]\033[0m")
 	print("\033[32m10. SELECT * FROM 表名,表名 [limit N 或者 N,M] # 表的连接")
+	print("\033[32m11. EXIT")
+	print("\033[32m12. QUIT")
+	print("\033[32m12. SELECT VERSION()")
