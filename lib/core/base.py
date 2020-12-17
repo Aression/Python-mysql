@@ -475,6 +475,7 @@ def help():
 	print("\033[1;35m支持SQL 语句大小写、注释符/**/ #、 || && 、 where 支持比较远算符 > >= < <= = != \033[0m")
 	print("")
 	print("目前数据库支持的操作如下:")
+	print("")
 	print("\033[32m1. SELECT 列名,列名... FROM 表名 [WHERE 条件 [[AND] [OR]] [LIMIT N 或者 N,M]\033[0m")
 	print("\033[32m2. UPDATE 表名 SET 列名=新值, 列名=新值 [WHERE 条件 [AND [OR]]\033[0m")
 	print("\033[32m3. DELETE FROM 表名 [WHERE  条件 [AND [OR]]\033[0m")
