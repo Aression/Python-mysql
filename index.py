@@ -6,14 +6,6 @@ Date: 2022-05-17 11:04:50
 LastEditors: Lv Di
 LastEditTime: 2022-05-17 13:04:09
 """
-"""
-Descripttion: 
-version: 
-Author: Lv Di
-Date: 2022-05-17 11:04:50
-LastEditors: Lv Di
-LastEditTime: 2022-05-17 11:25:58
-"""
 import imp
 import lib.core.base as db
 import lib.core.function as function
