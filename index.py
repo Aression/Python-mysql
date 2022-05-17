@@ -14,19 +14,18 @@ Date: 2022-05-17 11:04:50
 LastEditors: Lv Di
 LastEditTime: 2022-05-17 11:25:58
 """
+import imp
 import lib.core.base as db
 import lib.core.function as function
 import lib.parse.SqlToCode as SqlToCode
-import json
 import os
-import sys
 import getpass
+from lib.core.env import *
 
-version = 1.0
 welcome = f"""                                                                                                                                                                                                                                                                                                             
 welcome to python DBMS simuator \n
+-- 环境信息: 版本={VERSION}, 数据存储目录={DB_PATH}
 -- 键入help 命令查看帮助
--- 当前版本: {version}
 """
 
 if __name__ == "__main__":

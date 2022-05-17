@@ -7,8 +7,7 @@ bye = """\033[1;31mProgram terminating....\033[0m"""
 
 
 def parseSql(sql):
-
-    # sql 规范化 去首尾空格  将多个连续空格转一个
+    # sql语句的规范化 去首尾空格  将多个连续空格转一个
     sql = sql.lower()
     sql = sql.split(";")[0]
     sql = sql.split("#")[0]

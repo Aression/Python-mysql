@@ -482,8 +482,12 @@ def table_join(table_names, columns, wheres, limit):
 
     function.console_print(table_head, dikaer)
 
-notify = """本数据库按照 MYSQL 为原型进行修改，大致操作同mysql
-支持SQL 语句大小写、注释符/**/ #、 || && 、 where 支持比较运算符 > >= < <= = != 
+
+notify = """支持SQL语句无视大小写
+支持的注释符: /**/ #
+支持的逻辑运算符: || && 
+支持的条件运算符: where 
+支持的比较运算符: > >= < <= = != 
 """
 
 actions = """SQL指令
@@ -499,9 +503,11 @@ actions = """SQL指令
 10. SELECT * FROM 表名,表名 [limit N 或者 N,M]
 
 DBMS指令
-11. EXIT QUIT
-12. SELECT VERSION()
+11. EXIT/QUIT #退出dbms
+12. SELECT VERSION() #查看dbms版本
 13. CWD"""
+
+
 def help():
     print(f"\033[1;33m{notify}\033[0m")
     print(f"\033[32m{actions}\033[0m")
