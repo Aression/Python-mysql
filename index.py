@@ -4,6 +4,14 @@ version:
 Author: Lv Di
 Date: 2022-05-17 11:04:50
 LastEditors: Lv Di
+LastEditTime: 2022-05-17 13:04:09
+"""
+"""
+Descripttion: 
+version: 
+Author: Lv Di
+Date: 2022-05-17 11:04:50
+LastEditors: Lv Di
 LastEditTime: 2022-05-17 11:25:58
 """
 import lib.core.base as db
@@ -27,7 +35,7 @@ if __name__ == "__main__":
     while True:
         try:
             sql = input(
-                f"\n\033[32m[{getpass.getuser()} at {os.getcwd()}] # DBMS>> \033[0m"
+                f"\n\033[36m[{getpass.getuser()} at {os.getcwd()}] # DBMS>> \033[0m"
             )
             if len(sql) != 0:
                 SqlToCode.parseSql(sql)

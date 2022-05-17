@@ -70,7 +70,6 @@ def parseSql(sql):
                 table_name = sql_arr[2]
                 db.drop_table(table_name)
             elif operation1 == "database":
-                # 尚未实现
                 dbname = sql_arr[2]
                 db.drop_db(dbname)
             else:
@@ -104,7 +103,6 @@ def parseSql(sql):
 
         # 查询操作
         elif operation == "select":
-
             try:
                 # 从表中查询数据
                 if "from" in sql:
