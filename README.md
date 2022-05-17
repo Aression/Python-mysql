@@ -4,7 +4,7 @@
  * @Author: Lv Di
  * @Date: 2022-05-17 11:04:50
  * @LastEditors: Lv Di
- * @LastEditTime: 2022-05-17 13:22:01
+ * @LastEditTime: 2022-05-17 13:28:44
 -->
 
 ## 程序截图
@@ -22,6 +22,13 @@
 11. exit/quit
 12. select version
 13. cwd
+
+## 原理
+
+1. DBMS架构
+2. 数据存储的实现
+3. 事务管理
+4. 进程管理与冲突解决
 
 ## 项目结构
 
