@@ -14,15 +14,15 @@ import os
 import getpass
 from lib.core.env import *
 
-welcome = f"""                                                                                                                                                                                                                                                                                                             
-welcome to python DBMS simuator \n
--- 环境信息: 版本={VERSION}, 数据存储目录={DB_PATH}
--- 键入help 命令查看帮助
-"""
+welcome = f"""welcome to python DBMS simuator"""
+notify = f"""
+-- 环境信息: 版本={VERSION}, 数据存储目录={os.getcwd()}\{DB_PATH}
+-- 键入help 命令查看帮助"""
 
 if __name__ == "__main__":
     os.system("cls")
-    print("\033[34m" + welcome + "\033[0m")
+    print("\033[1;34m" + welcome + "\033[0m")
+    print("\033[0;34m" + notify + "\033[0m")
     while True:
         try:
             sql = input(
