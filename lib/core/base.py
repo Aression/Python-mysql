@@ -57,7 +57,6 @@ def create_table(table_name, columns):
 
 
 def show_databases():
-
     try:
         db_list = os.listdir(env.DB_PATH)
         if len(db_list) == 0:
@@ -109,7 +108,7 @@ def drop_db(dbname):
         else:
             print("\033[1;31mERROR : 删除库错误 库{0}不存在\033[0m".format(dbname))
     except Exception as e:
-        print("\033[1;31mERROR : 删除库错误 原因未知\033[0m")
+        print(f"\033[1;31mERROR : 删除库错误 原因: {e}\033[0m")
 
 
 def drop_table(table_name):
@@ -132,6 +131,7 @@ def drop_table(table_name):
 def insert_into_table(table_name, data):
     """
     data的类型为 [{"name":x,"sex":x},{"name":x,"sex":x}]
+    获取到整体表后重设索引
     """
     tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
@@ -144,10 +144,11 @@ def insert_into_table(table_name, data):
     if table_info == False:
         return 0
 
-    # 检查数据是否 符合表的结构
+    # 检查数据是否 符合表的结构(不考虑索引项)
     for x in data:
         if function.check_data_with_table_format(tmp_table_path, x) == False:
             return 0
+
     # 尝试写入数据
     try:
         if os.path.isfile(tmp_table_path) == True:
@@ -158,16 +159,59 @@ def insert_into_table(table_name, data):
                     if json.loads(line) in data:
                         print("\033[1;31mERROR : 暂不支持重复数据\033[0m")
                         return 0
+
             with open(tmp_table_path, "a") as f:
                 for x in data:
-                    f.write(json.dumps(x) + "\n")
-                print("数据插入成功")
+                    #insert into test(id,name) values (5,'shit')
+                    tmp = dict( {"_index": -1}, **x)
+                    tmp = json.dumps(tmp)
+                    f.write(tmp + "\n")
+                f.close()
+            print("数据插入成功")
         else:
             print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
     except Exception as e:
         raise e
         pass
 
+def reset_index(table_name):
+    tmp_table_path = tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
+
+    # 预检查
+    if os.path.isfile(tmp_table_path) == False:
+        print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
+        return 0
+
+    # 检查表头是否存在
+    table_info = function.get_table_info(tmp_table_path)
+    if table_info == False:
+        return 0
+
+    try:
+        if os.path.isfile(tmp_table_path) == True:
+            # 重设index 貌似没用？
+            lines = None
+            with open(tmp_table_path,"r+") as f:
+                lines = f.readlines()
+            with open(tmp_table_path,'w+') as f:
+                if(len(lines)>1):
+                    f.truncate()
+                    f.write(lines[0])
+                    ind=0
+                    for line in lines[1:]:
+                        print(line)
+                        tmp = json.loads(line)
+                        tmp['_index']=ind
+                        f.write(json.dumps(tmp)+'\n')
+                        ind+=1
+                    print("索引重设成功")
+                else:
+                    print("无需重设索引,没有足够的元素")
+            
+    except Exception as e:
+        print(f"无法重设索引：{e}")
+
+   
 
 def delete_from_table(table_name, wheres, relations):
     """

@@ -84,6 +84,9 @@ def parseSql(sql):
                     # 将字符串分割成 表名 和 列名+type
                     table_name = sql_arr[2].split("(")[0]
                     key_value = sql.split("(")[1].split(")")[0]
+                    # print(key_value)
+                    key_value = "_index int," + key_value
+                    # print(key_value)
                     # 将 列名与type 转化成json格式并放入 columns
                     columns = {}
                     for x in key_value.split(","):
@@ -141,7 +144,6 @@ def parseSql(sql):
                             relations += re.findall("(or|and)", tmp_where)
 
                             # 将所有的条件放入一个数组
-
                             for where in tmp_wheres:
                                 wheres.append(where.strip())
 
@@ -189,7 +191,6 @@ def parseSql(sql):
 
                 # 版本查询
                 elif "version()" in sql:
-
                     if len(sql.split(" ")) == 2:
                         db.select_version()
                     else:
@@ -235,6 +236,7 @@ def parseSql(sql):
                     for x in values:
                         if len(columns) != len(x):
                             print("\033[1;31mERROR : 输入的列数不符\033[0m")
+
                     # 转化为接口能处理的形式
                     res_dict = []
                     for value in values:
@@ -244,9 +246,10 @@ def parseSql(sql):
                             tmp.update({columns[count]: column})
                             count += 1
                         res_dict.append(tmp)
+
                     # 插入数据库
                     db.insert_into_table(table, res_dict)
-
+                    db.reset_index(table)
                 except Exception as e:
                     raise e
 

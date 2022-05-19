@@ -23,11 +23,15 @@ def get_table_info(table_path):
 def check_data_with_table_format(table_name, data):
     # 检查信息是否与表的格式一致
     # 用在 insert 语句
+
+    # 获取table结构
     tmp_info = get_table_info(table_name)
     if tmp_info == False:
         return False
 
+    # 删除内置索引
     table_info = json.loads(tmp_info)
+    table_info.pop('_index')
 
     try:
         # 长度检查
