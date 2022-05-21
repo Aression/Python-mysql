@@ -249,7 +249,6 @@ def parseSql(sql):
 
                     # 插入数据库
                     db.insert_into_table(table, res_dict)
-                    db.reset_index(table)
                 except Exception as e:
                     raise e
 

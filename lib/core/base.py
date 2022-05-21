@@ -131,7 +131,6 @@ def drop_table(table_name):
 def insert_into_table(table_name, data):
     """
     data的类型为 [{"name":x,"sex":x},{"name":x,"sex":x}]
-    获取到整体表后重设索引
     """
     tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
 
@@ -162,8 +161,8 @@ def insert_into_table(table_name, data):
 
             with open(tmp_table_path, "a") as f:
                 for x in data:
-                    #insert into test(id,name) values (5,'shit')
-                    tmp = dict( {"_index": -1}, **x)
+                    # insert into test(id,name) values (5,'shit')
+                    tmp = dict({"_index": -1}, **x)
                     tmp = json.dumps(tmp)
                     f.write(tmp + "\n")
                 f.close()
@@ -172,46 +171,7 @@ def insert_into_table(table_name, data):
             print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
     except Exception as e:
         raise e
-        pass
 
-def reset_index(table_name):
-    tmp_table_path = tmp_table_path = env.CURRENT_PATH + "/" + table_name + ".json"
-
-    # 预检查
-    if os.path.isfile(tmp_table_path) == False:
-        print("\033[1;31mERROR : 数据表{0}不存在\033[0m".format(table_name))
-        return 0
-
-    # 检查表头是否存在
-    table_info = function.get_table_info(tmp_table_path)
-    if table_info == False:
-        return 0
-
-    try:
-        if os.path.isfile(tmp_table_path) == True:
-            # 重设index 貌似没用？
-            lines = None
-            with open(tmp_table_path,"r+") as f:
-                lines = f.readlines()
-            with open(tmp_table_path,'w+') as f:
-                if(len(lines)>1):
-                    f.truncate()
-                    f.write(lines[0])
-                    ind=0
-                    for line in lines[1:]:
-                        print(line)
-                        tmp = json.loads(line)
-                        tmp['_index']=ind
-                        f.write(json.dumps(tmp)+'\n')
-                        ind+=1
-                    print("索引重设成功")
-                else:
-                    print("无需重设索引,没有足够的元素")
-            
-    except Exception as e:
-        print(f"无法重设索引：{e}")
-
-   
 
 def delete_from_table(table_name, wheres, relations):
     """
@@ -510,6 +470,7 @@ def table_join(table_names, columns, wheres, limit):
         tmp_table_data.append(tmp_dict)
 
     tables_data_arr[1] = tmp_table_data
+
     # 表头合并
     table_head = table_head_arr[0] + table_head_arr[1]
 
@@ -535,18 +496,25 @@ notify = """支持SQL语句无视大小写
 """
 
 actions = """SQL指令
-1. SELECT 列名,列名... FROM 表名 [WHERE 条件 [[AND] [OR]] [LIMIT N 或者 N,M]
-2. UPDATE 表名 SET 列名=新值, 列名=新值 [WHERE 条件 [AND [OR]]
-3. DELETE FROM 表名 [WHERE  条件 [AND [OR]]
-4. INSERT INTO 表名 ( 列名,列名,...)VALUES (值,值,...)
-5. USE 数据库名
-6. CREATE [DATABASE|TABLE] [库名|表名(列名 类型,列名 类型....)]  # 类型只支持int string两种类型
-7. DROP [DATABASE|TABLE] [库名|表名]
-8. DESC 表名
-9. SHOW [DATABASES|TABLES]
-10. SELECT * FROM 表名,表名 [limit N 或者 N,M]
+//Create
+1. CREATE [DATABASE|TABLE] [库名|表名(列名 类型,列名 类型....)]  # 类型只支持int string两种类型
 
-DBMS指令
+//Read
+2. SELECT 列名,列名... FROM 表名 [WHERE 条件 [[AND] [OR]] [LIMIT N 或者 N,M]
+3. INSERT INTO 表名 ( 列名,列名,...)VALUES (值,值,...)
+4. SHOW [DATABASES|TABLES]
+5. SELECT * FROM 表名,表名 [limit N 或者 N,M]
+
+// Update
+6. UPDATE 表名 SET 列名=新值, 列名=新值 [WHERE 条件 [AND [OR]]
+
+//Delete
+7. DELETE FROM 表名 [WHERE  条件 [AND [OR]]
+
+//DBMS指令
+8. USE 数据库名
+9. DROP [DATABASE|TABLE] [库名|表名]
+10. DESC 表名
 11. EXIT/QUIT #退出dbms
 12. SELECT VERSION() #查看dbms版本
 13. CWD"""

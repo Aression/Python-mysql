@@ -31,7 +31,7 @@ def check_data_with_table_format(table_name, data):
 
     # 删除内置索引
     table_info = json.loads(tmp_info)
-    table_info.pop('_index')
+    table_info.pop("_index")
 
     try:
         # 长度检查
@@ -134,6 +134,7 @@ def select_data(table_info, data, wheres):
             if column == "int":
                 if eval(str(x[sub_where]) + str(operation) + str(condition)) == True:
                     res.append(json.dumps(x))
+
     return res
 
 
