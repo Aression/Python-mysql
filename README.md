@@ -68,11 +68,19 @@
 
 1. DBMS架构
 
+   ![2-tier dbms architecture](https://gitee.com/orange-mint/upload-image/raw/master/202205291728288.png)
+
 2. 数据存储的实现
+
+   
 
 3. 事务管理
 
+   
+
 4. 进程管理与冲突解决
+
+   
 
 ## 项目结构
 
