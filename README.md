@@ -1,4 +1,5 @@
 <!--
+
  * @Descripttion: 
  * @version: 
  * @Author: Lv Di
@@ -11,57 +12,57 @@
 
 1. 欢迎界面
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-15-49-18-E951FAA70C8C4B2F9D534A4227AF4C4D.png)
-   
-   
+   ![image-20220529172141676](https://gitee.com/orange-mint/upload-image/raw/master/202205291721829.png)
 
 2. select
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-45-09-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720365.png)
 
 3. update
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-15-03-54-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720808.png)
 
 4. delete
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-58-21-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720633.png)
 
 5. insert
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-51-28-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720679.png)
 
 6. use
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-24-19-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720846.png)
 
 7. create
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-49-10-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291720250.png)
 
 8. drop
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-49-29-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721495.png)
 
 9. desc
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-31-08-image.png)
+   ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721403.png)
 
 10. show
     
-    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-30-26-image.png)
+    ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721813.png)
 
 11. exit/quit
     
-    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-06-27-image.png)
+    ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721878.png)
 
 12. select version
     
-    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-06-04-image.png)
+    ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721875.png)
 
 13. cwd
     
-    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-05-37-image.png)
+    ![](https://gitee.com/orange-mint/upload-image/raw/master/202205291721439.png)
+    
+    
 
 ## 原理
 
