@@ -10,25 +10,99 @@
 ## 程序截图
 
 1. 欢迎界面
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-01-28-image.png)
+   
+   
+
 2. select
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-45-09-image.png)
+   
+   
+   
+   
+
 3. update
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-15-03-54-image.png)
+   
+   
+
 4. delete
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-58-21-image.png)
+   
+   
+
 5. insert
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-51-28-image.png)
+   
+   
+
 6. use
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-24-19-image.png)
+   
+   
+
 7. create
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-49-10-image.png)
+   
+   
+
 8. drop
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-49-29-image.png)
+   
+   
+
 9. desc
+   
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-31-08-image.png)
+   
+   
+
 10. show
+    
+    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-30-26-image.png)
+    
+    
+
 11. exit/quit
+    
+    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-06-27-image.png)
+    
+    
+
 12. select version
+    
+    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-06-04-image.png)
+    
+    
+
 13. cwd
+    
+    ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-05-37-image.png)
+    
+    
 
 ## 原理
 
 1. DBMS架构
+   
+   
 2. 数据存储的实现
+   
+   
 3. 事务管理
+   
+   
 4. 进程管理与冲突解决
+   
+   
 
 ## 项目结构
 

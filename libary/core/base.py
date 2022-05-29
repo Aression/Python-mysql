@@ -1,8 +1,8 @@
 import os
 import json
 import re
-import lib.core.env as env
-import lib.core.function as function
+import libary.core.env as env
+import libary.core.function as function
 
 
 def create_db(dbname):

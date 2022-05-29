@@ -6,13 +6,12 @@ Date: 2022-05-17 11:04:50
 LastEditors: Lv Di
 LastEditTime: 2022-05-17 13:04:09
 """
-import imp
-import lib.core.base as db
-import lib.core.function as function
-import lib.parse.SqlToCode as SqlToCode
+import libary.core.base as db
+import libary.core.function as function
+import libary.parse.SqlToCode as SqlToCode
 import os
 import getpass
-from lib.core.env import *
+from libary.core.env import *
 
 welcome = f"""welcome to python DBMS simuator"""
 notify = f"""

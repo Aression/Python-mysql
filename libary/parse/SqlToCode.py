@@ -1,5 +1,5 @@
-import lib.core.function as function
-import lib.core.base as db
+import libary.core.function as function
+import libary.core.base as db
 import re
 import os, sys
 
