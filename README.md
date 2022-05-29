@@ -11,7 +11,9 @@
 
 1. 欢迎界面
    
-   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-14-01-28-image.png)
+   ![](C:\Users\hanyi\AppData\Roaming\marktext\images\2022-05-29-15-49-18-E951FAA70C8C4B2F9D534A4227AF4C4D.png)
+   
+   
 
 2. select
    
